@@ -11,15 +11,15 @@ define('SSL_MODE', 'require');
 class DB {   
    
     public static function connection() {
-        $dsn = DB_TYPE . ':dbname=' . DB_NAME . ';host=' . DB_HOST . 
+        $connection_info = DB_TYPE . ':dbname=' . DB_NAME . ';host=' . DB_HOST . 
                ';port=' . DB_PORT . ';sslmode=' . SSL_MODE;
 
         try {
-           $db = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
-           return $db;
-        } catch (PDOException $e) {
-           echo $e->getMessage();
-           print_r($e->getTrace());
+           $connection = new PDO($connection_info, DB_USERNAME, DB_PASSWORD);          
+           return $connection;         
+        } catch ( PDOException $exception ) {           
+           echo $exception->getMessage();     
+           print_r($exception->getTrace());
         }        
     }
 }
