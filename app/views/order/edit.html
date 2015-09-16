@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+{% import "macros/forms.html" as forms %}
+
+<h3>{{message}}</h3>
+
+<h1>Muokkaa tilausta</h1> 
+
+<form method='POST'>
+    <div class="form-group">
+        <label for="status" class="control-label">Status</label>
+        <select class="form-control"
+                name="status">
+            <option value="Jonossa" {% if order.status == 'Jonossa' %} selected 
+                    {% endif %}>
+                    
+                    Jonossa
+            </option>
+            
+            <option value="Työn alla" {% if order.status == 'Työn alla' %} 
+                    selected {% endif %}>
+                    
+                    Työn alla
+            </option>
+        
+            {% if order.delivery_method == 'Nouto' %}
+                <option value="Valmis noudettavaksi" 
+                        {% if order.status == 'Valmis noudettavaksi' %} selected 
+                        {% endif %}>
+                        
+                        Valmis noudettavaksi
+                </option>
+            {% else %}
+                <option value="Kuljetuksessa" {% if order.status == 
+                        'Kuljetuksessa' %} selected {% endif %}>
+                        
+                        Kuljetuksessa
+                </option>
+            {% endif %}
+            <option value="Toimitettu" {% if order.status == 'Toimitettu' %} 
+                    selected {% endif %}>
+                    
+                    Toimitettu
+            </option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">Tallenna</button>
+    </div>    
+</form>
+
+{% endblock %}

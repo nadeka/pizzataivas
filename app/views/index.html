@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>{{message}}</h3>
+
+<div id="front-page">
+    <h1>Tervetuloa Pizzataivaaseen!</h1>
+    <p id="intro-text">Vivamus placerat lacus vel vehicula scelerisque, dui enim adipiscing lacus 
+        amet sagittis, libero enim vitae mi. In neque magna posuere, euismod ac 
+        tincidunt tempor est. Ut suscipit nisi eu purus. Proin ut pede mauris eget 
+        ipsum. Integer vel quam nunc commodo consequat. Integer ac eros eu tellus 
+        dignissim viverra. Maecenas erat aliquam erat volutpat. Ut venenatis ipsum 
+        quis turpis. Integer cursus scelerisque lorem. Sed nec mauris id quam 
+        blandit consequat. Cras nibh mi hendrerit vitae, dapibus et aliquam et 
+        magna. Nulla vitae elit. Mauris consectetuer odio vitae augue.</p>
+
+    <p>
+        <a href="tuotteet/pizzat" class="btn btn-lg btn-primary">
+            Pizzat &raquo;
+        </a>
+        <a href="tuotteet/kebabit" class="btn btn-lg btn-primary">
+            Kebabit &raquo;
+        </a>
+        <a href="tuotteet/salaatit" class="btn btn-lg btn-primary">
+            Salaatit &raquo;
+        </a>
+        <a href="tuotteet/juomat" class="btn btn-lg btn-primary">
+            Juomat &raquo;
+        </a>
+    </p>
+</div>
+
+{% endblock %}

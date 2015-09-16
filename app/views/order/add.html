@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+{% import "macros/forms.html" as forms %}
+{% import "macros/cart.html" as cart_ %}
+
+<h3>{{message}}</h3>
+
+<h1>Kassa</h1> 
+
+{% if cart.items is empty %}
+    <p>Korisi on tyhjä.</p>
+{% else %}
+    <h2>Tuotteet</h2> 
+    
+    {{cart_.item_table("#{cart}", "#{forms}", "#{base_path}", 
+                       "#{current_uri}")}}
+
+    {% if not user_logged_in %}
+        <p>Rekisteröitymällä nopeutat tilausten tekoa ja voit tarkastella 
+           tilaushistoriaasi. 
+        </p>
+
+        <form method="get" action="/rekisteroidy">
+            <button type="submit" class="btn btn-success">Rekisteröidy</button>
+        </form>
+    {% endif %}
+    
+    {{forms.errors(errors)}}
+
+    <h2 id="order-user-info">Yhteystiedot</h2> 
+
+    {{forms.user_form("#{user}", "checkout", "Lähetä tilaus", "#{current_uri}", 
+                      "#{cart}")}}       
+{% endif %}
+ 
+{% endblock %}

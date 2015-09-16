@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+{% import "macros/forms.html" as forms %}
+
+<h3>{{message}}</h3>
+
+<p>
+    <h1>Ainesosat</h1> 
+
+    <a class="btn btn-success btn-lg" 
+       href="/ainesosat/lisaa">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        Lisää ainesosa
+    </a>      
+</p>
+
+<table class="table table-responsive table-bordered table-hover">
+    <thead>
+        <tr>
+          <th>Nimi</th>
+          <th>Tyyppi</th>
+          <th>Hinta</th>
+          <th></th>
+        </tr>
+    </thead>          
+
+    <tbody>       
+        {% for ingredient in ingredients %}        
+            <tr>
+                <td>{{ingredient.ingredient_name}}</td>
+                <td>{{ingredient.ingredient_type}}</td>
+                <td>{{ingredient.price}}</td>
+                
+                <td>                    
+                    <a class="btn btn-primary" 
+                       href="/ainesosat/{{ingredient.id}}/muokkaa">
+                       <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                       Muokkaa</a>
+                    
+                    {{forms.destroy_button("#{base_path}/ainesosat/#{ingredient.id}/poista", 
+                    "Haluatko varmasti poistaa ainesosan #{ingredient.ingredient_name}?", "Poista")}}
+                </td>
+            </tr>
+        {% endfor %}        
+    </tbody>
+</table>       
+
+{% endblock %}

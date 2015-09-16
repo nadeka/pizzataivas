@@ -1,0 +1,315 @@
+{% macro destroy_button(action, confirm_text, submit_button_text, current_uri) %}
+    <form method="POST" action="{{action}}" style="display: inline-block;"
+          class="destroy-form" data-confirm="{{confirm_text}}">
+        
+        <input type="hidden" name="redirect" value="{{current_uri}}" />
+        <button type="submit" class="btn btn-danger">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            {{submit_button_text}}
+        </button>
+    </form> 
+{% endmacro %}
+
+{% macro errors(errors) %}
+    {% if errors %}
+      <div class="alert alert-danger">
+        <ul>
+          {% for error in errors %}
+                {% for field in error %}
+                    <li>{{field}}</li>
+                {% endfor %}      
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro ingredient_form(ingredient, submit_button_text, current_uri) %}
+    <form method='POST'>
+        <div class="form-group">
+            <label for="ingredient_name" class="control-label">Nimi</label>
+            <input type="text" class="form-control" name="ingredient_name"
+                   value="{{ingredient.ingredient_name}}" id="ingredient_name">
+        </div>  
+
+        <div class="form-group">
+            <label for="ingredient_type" class="control-label">Tyyppi</label>
+            <select class="form-control" value="{{ingredient.ingredient_type}}"
+                    name="ingredient_type">
+                <option value="Täyte" 
+                        {% if ingredient.ingredient_type == 'Täyte' %} selected 
+                        {% endif %}>
+                        Täyte
+                </option>
+                <option value="Juusto" 
+                        {% if ingredient.ingredient_type == 'Juusto' %} selected 
+                        {% endif %}>
+                        Juusto
+                </option>
+                <option value="Kastike" 
+                        {% if ingredient.ingredient_type == 'Kastike' %} 
+                        selected {% endif %}>
+                        Kastike
+                </option>
+                <option value="Pizzapohja" 
+                        {% if ingredient.ingredient_type == 'Pizzapohja' %} 
+                        selected {% endif %}>
+                        Pizzapohja
+                </option>
+                <option value="Kebab-lisuke" 
+                        {% if ingredient.ingredient_type == 'Kebab-lisuke' %} 
+                        selected {% endif %}>
+                        Kebab-lisuke
+                </option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="price" class="control-label">Hinta</label>
+            <input type="text" class="form-control" name="price" 
+                   value="{{ingredient.price}}">
+        </div>
+
+        <div class="form-group">
+            <input type="hidden" name="redirect" value="{{current_uri}}" />
+            <button type="submit" 
+                    class="btn btn-success">{{submit_button_text}}
+            </button>
+        </div>
+    </form>
+{% endmacro %}
+
+{% macro product_form(product, ingredients, submit_button_text, current_uri) %}
+    <form method='POST'>
+        <div class="form-group">
+            <label for="product_name" class="control-label">Nimi</label>
+            <input type="text" name="product_name" 
+                   value="{{product.product_name}}" class="form-control" 
+                   id="product_name">
+        </div>   
+
+        <div class="form-group">
+            <label for="description" class="control-label">Kuvaus</label>        
+            <textarea class="form-control" id="description" 
+                      name="description">{{product.description}}</textarea>
+        </div>
+
+        <input type="hidden" name="category" value="{{product.category}}">
+
+        {% if product.category == 'Juoma' %}
+            <div class="form-group">
+                <label for="price" class="control-label">Hinta</label>        
+                <input type="text" name="price" class="form-control"
+                       value="{{product.price}}">
+            </div>              
+        {% else %}
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" id="customizable" 
+                           onchange="toggleIngredientList();" 
+                           name="customizable" 
+                           value="{{product.customizable}}">Kustomoitava
+                </label>
+            </div>              
+
+            <div class="form-group">
+              <label for="price" class="control-label">Hinta</label>        
+              <input type="text" name="price" class="form-control" 
+                     id="price" value='0' readonly>
+            </div>                                    
+
+            {% if ingredients.bases is not null and ingredients.bases is not empty %}
+                <div class="form-group">
+                    <select class="addSelect form-control" name="ingredients[0]" 
+                            onchange="updatePrice();">
+                        <option value="empty" price="0">Pohja</option>
+                        {% for base in ingredients.bases %}
+                            <option value="{{base.ingredient_name}}" 
+                                    price="{{base.price}}"
+                                    {% if base.ingredient_name == 
+                                    product.ingredients[0] %} selected 
+                                    {% endif %}>
+
+                                    {{base.ingredient_name}} 
+                                    {{base.price}} €
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+            {% if ingredients.sauces is not null and ingredients.sauces is not empty %} 
+                <div class="form-group">
+                    <select class="addSelect form-control" name="ingredients[1]" 
+                            onchange="updatePrice();">
+                        <option value="empty" price="0">Kastike</option>
+                        {% for sauce in ingredients.sauces %}
+                            <option value="{{sauce.ingredient_name}}" 
+                                    price="{{sauce.price}}"
+                                    {% if sauce.ingredient_name == 
+                                    product.ingredients[1] %} selected 
+                                    {% endif %}>
+
+                                    {{sauce.ingredient_name}} 
+                                    {{sauce.price}} €
+                            </option>
+                        {% endfor %} 
+                    </select> 
+                </div>
+            {% endif %}
+
+            {% if ingredients.cheeses is not null and ingredients.cheeses is not empty %}     
+                <div class="form-group">
+                    <select class="addSelect form-control" name="ingredients[2]" 
+                            onchange="updatePrice();">
+                        <option value="empty" price="0">Juusto</option>
+                        {% for cheese in ingredients.cheeses %}
+                            <option value="{{cheese.ingredient_name}}" 
+                                    price="{{cheese.price}}"
+                                     {% if cheese.ingredient_name == 
+                                     product.ingredients[2] %} selected 
+                                     {% endif %}>
+
+                                     {{cheese.ingredient_name}} 
+                                     {{cheese.price}} €
+                            </option>
+                        {% endfor %}   
+                    </select> 
+                </div>
+            {% endif %}      
+
+            {% if ingredients.toppings is not null and ingredients.toppings is not empty %}
+                {% for i in 3..9 %} 
+                    <div class="form-group">
+                        <select class="addSelect form-control" 
+                                name="ingredients[{{i}}]" 
+                                onchange="updatePrice();">
+                            <option value="empty" price="0">Täyte {{i}}</option>
+                            {% for topping in ingredients.toppings %}
+                                <option value="{{topping.ingredient_name}}" 
+                                        price="{{topping.price}}"
+                                        {% if topping.ingredient_name ==
+                                        product.ingredients[i] %} selected 
+                                        {% endif %}>
+
+                                        {{topping.ingredient_name}} 
+                                        {{topping.price}} €
+                                </option>
+                            {% endfor %} 
+                        </select>   
+                    </div>
+                {% endfor %} 
+            {% endif %}  
+        {% endif %}            
+        <div> 
+            <input type="hidden" name="redirect" value="{{current_uri}}" />
+            <button type="submit" class="btn btn-success">
+                {{submit_button_text}}
+            </button>
+        </div>
+    </form>
+{% endmacro %}
+
+{% macro user_form(user, type, submit_button_text, current_uri, cart) %}
+    <form method='POST'>
+        <div class="form-group">
+          <label for="first_name" class="control-label">Etunimi *</label>
+            <input type="text" class="form-control" id="first_name" 
+                   name="first_name" value="{{user.first_name}}"
+                   placeholder='Etunimi'>
+        </div>
+
+        <div class="form-group">
+          <label for="last_name" class="control-label">Sukunimi *</label>
+            <input type="text" class="form-control" id="last_name"
+                   name="last_name" value="{{user.last_name}}"
+                   placeholder='Sukunimi'>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="control-label">Sähköposti</label>
+            <input type="email" class="form-control" id="email" 
+                   name="email" value="{{user.email}}"
+                   placeholder='Sähköposti'>
+        </div>
+
+        <div class="form-group">
+          <label for="phone_number" class="control-label">Puhelinnumero *</label>
+            <input type="text" class="form-control" id="phone_number" 
+                   name="phone_number" value="{{user.phone_number}}"
+                   placeholder='Puhelinnumero'>
+        </div>  
+
+        <input type="hidden" name="user_id" value="{{user.id}}">
+
+        <div class="form-group">
+            <label for="street_address" class="control-label">Katuosoite *</label>
+            <input type="text" class="form-control" id="street_address" 
+                   name="street_address" value="{{user.street_address}}"
+                   placeholder='Katuosoite'>
+        </div>
+
+        <div class="form-group">
+            <label for="postal_code" class="control-label">Postinumero *</label>
+            <input type="text" class="form-control" id="postal_code" 
+                   name="postal_code" value="{{user.postal_code}}"
+                   placeholder='Postinumero'>
+        </div>
+        
+        <div class="form-group">
+          <label for="city" class="control-label">Kaupunki *</label>
+            <input type="text" class="form-control" id="city" 
+                   name="city" value="{{user.city}}"
+                   placeholder='Kaupunki'>
+        </div>         
+
+        {% if type == 'checkout' %}
+            <div class="form-group">
+                <h5 style="font-weight: bold">Toimitustapa</h5>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="delivery_method" 
+                               value="Kotiinkuljetus" checked>Kotiinkuljetus 
+                               (toimitus 60 min kuluttua tilauksesta)
+                    </label>
+                </div>
+
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="delivery_method" 
+                               value="Nouto">Nouto (valmis noudettavaksi 
+                               15 min kuluttua tilauksesta)
+                    </label>
+                </div>
+            </div>   
+        
+            <div class="form-group">
+                <label for="total_price" class="control-label">Loppusumma</label>
+                <p class="price" name="total_price" id="total_price" readonly>
+                    {{cart.price}} €        
+                </p>
+            </div>         
+
+        {% elseif type == 'register' %}
+            <div class="form-group">
+                <label for="username" class="control-label">Käyttäjätunnus *</label>
+                <input type="text" class="form-control" id="username" 
+                       value="{{user.username}}"
+                       name="username" placeholder="Käyttäjätunnus">
+            </div>  
+
+            <div class="form-group">
+                <label for="password" class="control-label">Salasana *</label>
+                <input type="password" class="form-control" id="password" 
+                       name="password" placeholder="Salasana">
+            </div>         
+        {% endif %}
+        
+        <p>* pakollinen</p>
+
+        <div class="form-group">
+            <input type="hidden" name="redirect" value="{{current_uri}}" />
+            <button type="submit" class="btn btn-success btn-lg">{{submit_button_text}}</button>
+        </div>            
+    </form>
+{% endmacro %}

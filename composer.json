@@ -1,0 +1,19 @@
+{
+    "autoload": {
+            "classmap": [
+                    "config/database.php",
+                    "lib",
+                    "app/controllers",
+                    "app/models"
+            ]
+    },
+    
+    "require": {
+            "slim/slim": "*",
+            "twig/twig": "*",
+            "raveren/kint": "*",
+            "zeuxisoo/slim-whoops": "*",
+            "vlucas/valitron": "*",
+            "herrera-io/silex-pdo": "*"
+    }    
+}

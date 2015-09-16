@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>Pizzataivas</title>
+
+    <link href="/assets/bootstrap/css/bootstrap.min.css" 
+          rel="stylesheet">
+    <link href="/assets/css/site.css" rel="stylesheet">
+  </head>
+
+  <body>
+    {% import "macros/forms.html" as forms %}
+    {% import "macros/cart.html" as cart_ %}
+    
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Pizzataivas</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">        
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" 
+                   role="button" aria-haspopup="true" aria-expanded="false">
+                  Tuotteet <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                      <a href="/tuotteet/pizzat">Pizzat</a>
+                  </li>
+                  <li>
+                      <a href="/tuotteet/kebabit">Kebabit</a>
+                  </li>
+                  <li>
+                      <a href="/tuotteet/salaatit">Salaatit</a>
+                  </li>  
+                  <li>
+                      <a href="/tuotteet/juomat">Juomat</a>
+                  </li>              
+                </ul>
+            </li>  
+
+            {% if user_logged_in and user_logged_in.username == 'admin' %}
+                <li><a href="/ainesosat">Ainesosat</a></li>
+            {% endif %}
+
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" 
+                   role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-shopping-cart" 
+                          aria-hidden="true">                        
+                    </span> 
+                    Ostoskori ({{cart.items|length}})
+                  <span class="caret"></span>
+                </a>
+
+                <div class="cart-panel dropdown-menu">
+                    {% if cart.items is empty %}
+                        <p>Korisi on tyhjä.</p>
+                    {% else %}
+                        {{cart_.item_list("#{cart}", "#{forms}", "#{base_path}", 
+                        "#{current_uri}")}}
+
+                        <div class="cart-checkout">                    
+                            <a class="checkout-btn btn btn-success" 
+                               href="/kassa">
+                                Kassalle &raquo;
+                            </a> 
+
+                            <p class="price cart-price">{{cart.price}} €</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </li>
+
+            <li><a href="/info">Info</a></li>
+
+            {% if user_logged_in %}
+                <li role="presentation" class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" 
+                       role="button" aria-haspopup="true" aria-expanded="false">
+                      <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                      Profiili <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li>
+                          <a href="/omat_tiedot">Omat tiedot</a>
+                      </li>
+                      <li>
+                          <a href="/tilaushistoria">Tilaushistoria</a>
+                      </li>    
+                    </ul>
+                </li>
+            {% endif %}
+          </ul>
+<!--          <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Kirjoita hakusana(t)">
+            </div>
+            <button type="submit" class="btn btn-default">Etsi</button>
+          </form>-->
+          <ul class="nav navbar-nav navbar-right">
+            {% if user_logged_in %}
+            <li>
+                <form method="post" 
+                      action="/kirjaudu_ulos">
+
+                    <button type="submit" 
+                            class="btn btn-default navbar-btn">
+                        <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                        Kirjaudu ulos
+                    </button>
+                </form>
+            </li>
+            {% else %}  
+            <li>
+                <form method="get" 
+                      action="/rekisteroidy">
+
+                    <button type="submit" 
+                            class="btn btn-default navbar-btn">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            Rekisteröidy
+                    </button>
+                </form>  
+            </li>
+            <li>
+                <form method="get" action="/kirjaudu">
+                    <button type="submit" 
+                            class="btn btn-default navbar-btn">
+                        <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                        Kirjaudu
+                    </button>
+                </form>    
+            </li>
+            {% endif %}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>    
+
+    <div id="main-container">
+     {% block content %}{% endblock %}
+    </div>      
+    
+    <hr>
+    
+    <footer>
+        <p>&copy; Pizzataivas 2015</p>
+    </footer>
+
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/site.js"></script>
+  </body>
+</html>

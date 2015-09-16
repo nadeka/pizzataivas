@@ -1,0 +1,54 @@
+{% macro item_list(cart, forms, base_path, current_uri) %}
+    {% if cart is not null %}
+        {% for index, item in cart.items %}
+            {% if item is not null %}    
+                <div class="cart-list">      
+                    <h4 class="product-name">{{item.product_name}}</h4>
+                    
+                    <div id ="cart-remove-btn">
+                        {{forms.destroy_button("/ostoskori/#{index}/poista", 
+                        "Haluatko varmasti poistaa tuotteen #{item.product_name} korista?", 
+                        "Poista", "#{current_uri}")}}
+                    </div>
+
+                    <p name="price" value='{{item.price}}' 
+                        readonly>{{item.price}} €         
+                    </p> 
+
+                    {% for key, ingredient in item.ingredients %}
+                        {{ingredient.ingredient_name}}{% if item.ingredients[key + 1] is not null %},{% endif %}
+                    {% endfor %}
+                </div>
+            <hr>
+            {% endif %}
+        {% endfor %}
+    {% endif %}  
+{% endmacro %}
+
+{% macro item_table(cart, forms, base_path, current_uri) %}
+    <table class="table table-responsive table-hover table-bordered">     
+        <tbody>
+            {% if cart is not null %}
+                {% for index, item in cart.items %}
+                    {% if item is not null %}
+                        <tr>
+                            <td>{{item.product_name}}</td>
+                            <td>{{item.price}} €</td>
+                            <td>
+                                {% for key, ingredient in item.ingredients %}
+                                    {{ingredient.ingredient_name}}{% if item.ingredients[key + 1] is not null %},{% endif %}
+                                {% endfor %}
+                            </td>
+
+                            <th>              
+                                {{forms.destroy_button("/ostoskori/#{index}/poista", 
+                                "Haluatko varmasti poistaa tuotteen #{item.product_name} korista?", 
+                                "Poista", "#{current_uri}")}}
+                            </th>   
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+{% endmacro %}

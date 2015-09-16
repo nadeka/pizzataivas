@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>{{message}}</h3>
+
+<h1>Tilaushistoria</h1>  
+
+{% if orders is empty %}
+    <h3>Tilaushistoriasi on tyhjä.</h3>
+{% else %}
+    {% for order in orders %}
+        <table class="order-table table table-responsive table-bordered table-hover">
+            <thead>
+                <tr>   
+                    <th>Tilaaja</th>
+                    <th>Toimitustapa</th>
+                    <th>Toimitusosoite</th>
+                    <th>Tilausajankohta</th>
+                    <th>Sovittu toimitusaika</th>
+                    <th>Toimitusaika</th>
+                    <th>Status</th>
+                    <th>Loppusumma</th>
+                    <th></th>
+                </tr>
+            </thead>          
+
+            <tbody>   
+                <tr>
+                    <td>{{order.user_info.first_name}}
+                        {{order.user_info.last_name}}, puh. 
+                        {{order.user_info.phone_number}}
+                    </td>
+                    <td>{{order.delivery_method}}</td>
+                    <td>{{order.delivery_address}}</td>
+                    <td>{{order.order_time}}</td>
+                    <td>{{order.agreed_delivery_time}}</td>           
+                    <td>{{order.actual_delivery_time}}</td>
+                    <td>{{order.status}}</td>
+                    <td>{{order.total_price}} €</td>
+                    <td>
+                        {% if user_logged_in.username == 'admin' %}
+                            <a class="btn btn-primary" style='display: inline-block'
+                               href="/tilaukset/{{order.id}}
+                               /muokkaa">Muokkaa
+                            </a>
+                        {% endif %}                                           
+                    </td> 
+                </tr>
+            </tbody> 
+        </table>
+    
+        <table class="table table-responsive table-bordered">
+            <thead>            
+                <tr>
+                    <th>Tuotteet</th>
+                    <th>Ainekset</th>
+                    <th>Hinta</th>               
+                </tr>
+            </thead>
+
+            {% for product in order.products %}
+                <tbody>
+                    <tr>
+                      <td>{{product.product_name}}</td>
+                      <td>
+                          {% for ingredient in product.ingredients %}
+                                {{ingredient.ingredient_name}}
+                          {% endfor %}
+                      </td>
+                      <td>{{product.price}} €</td>
+                    </tr>
+                </tbody>
+            {% endfor %}                      
+        </table>     
+    {% endfor %}  
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+{% import "macros/forms.html" as forms %}
+
+<h3>{{message}}</h3>
+
+<p>
+    {% if category == 'Pizza' %}
+        <h1>Pizzat</h1> 
+    {% elseif category == 'Kebab' %}
+        <h1>Kebabit</h1> 
+    {% elseif category == 'Juoma' %}
+        <h1>Juomat</h1> 
+    {% else %}
+        <h1>Salaatit</h1>
+    {% endif %}
+
+    {% if user_logged_in and user_logged_in.username == 'admin' %}
+        <a class="btn btn-success btn-lg" 
+           href="/tuotteet/{{category}}/lisaa">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Lisää {{category | lower}}
+        </a> 
+    {% endif %}
+</p>
+
+<div class="product-list">
+{% for product in products %}    
+    <div class="panel product-panel panel-default">
+        <form method="POST" action="/ostoskori/{{product.id}}/lisaa">
+            <h4 class="product-name">{{product.product_name}}</h4>
+
+            {% if product.customizable == FALSE %}
+                <p name="price" value='{{product.price}}' 
+                    readonly>{{product.price}} €         
+                </p>                 
+
+                {% for key, ingredient in product.ingredients %}
+                    {{ingredient.ingredient_name}}{% if product.ingredients[key + 1] is not null %},{% endif %}
+                {% endfor %}
+            {% elseif product.customizable == TRUE %}
+                <p name="price" id="price" value='{{product.price}}' 
+                    readonly>{{product.price}} €         
+                </p>                 
+                {% if ingredients.bases != null %}
+                    <select class="list-select addSelect form-control" 
+                            name="ingredients[]" 
+                            onchange="updatePrice();">
+                        <option value="empty" price="0">
+                            Valitse pohja
+                        </option>
+
+                        {% for base in ingredients.bases %}
+                              <option value="{{base.ingredient_name}}"
+                                      price="{{base.price}}">
+
+                                      {{base.ingredient_name}} 
+                                      {{base.price}} €
+                              </option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+
+                {% if ingredients.sauces != null %}
+                <select class="list-select addSelect form-control" 
+                        name="ingredients[]" onchange="updatePrice();">
+                    <option value="empty" price="0">
+                        Valitse kastike
+                    </option>
+
+                    {% for sauce in ingredients.sauces %}
+                          <option value="{{sauce.ingredient_name}}"
+                                  price="{{sauce.price}}">
+
+                                  {{sauce.ingredient_name}} 
+                                  {{sauce.price}} €
+                          </option>
+                    {% endfor %} 
+                </select> 
+                {% endif %}
+
+                {% if ingredients.cheeses != null %}               
+                    <select class="list-select addSelect form-control" 
+                            name="ingredients[]" 
+                            onchange="updatePrice();">
+                        <option value="empty" price="0">
+                            Valitse juusto
+                        </option>
+
+                        {% for cheese in ingredients.cheeses %}
+                              <option value="{{cheese.ingredient_name}}"
+                                      price="{{cheese.price}}">
+                                  {{cheese.ingredient_name}} 
+                                  {{cheese.price}} €
+                              </option>
+                        {% endfor %}   
+                    </select> 
+                {% endif %}      
+
+                {% if ingredients.toppings != null %}
+                    {% for i in 1..7 %} 
+                        <select class="list-select addSelect form-control" 
+                                name="ingredients[]" 
+                                onchange="updatePrice();">
+                            <option value="empty" price="0">
+                                Valitse täyte {{i}}
+                            </option>
+
+                            {% for topping in ingredients.toppings %}
+                                <option 
+                                    value="{{topping.ingredient_name}}"
+                                    price="{{topping.price}}">
+
+                                    {{topping.ingredient_name}} 
+                                    {{topping.price}} €
+                                </option>
+                            {% endfor %} 
+                        </select>             
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+            
+            <ul class="product-button-list list-unstyled list-inline">
+                <li class="horizontal-button-list-item">
+                    <button type="submit" class="btn btn-success">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        Lisää koriin
+                    </button> 
+                </li>
+                
+                <input type="hidden" name="redirect" value="{{current_uri}}"/>
+                </form>
+                
+                {%if user_logged_in and user_logged_in.username == 'admin'%}
+                    <li class="horizontal-button-list-item">
+                        <a class="btn btn-primary" 
+                           href="/tuotteet/{{category}}/
+                           {{product.id}}/muokkaa">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                Muokkaa
+                        </a>
+                    </li>
+                    <li class="horizontal-button-list-item">
+                        {{forms.destroy_button("/tuotteet/#{product.id}/poista", "Haluatko varmasti poistaa tuotteen #{product.product_name}?", "Poista", 
+                        "#{current_uri}")}}
+                    </li>
+                {% endif %}
+            </ul>            
+    </div>
+{% endfor %} 
+</div>
+
+{% endblock %}

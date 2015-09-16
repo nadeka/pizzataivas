@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+{% import "macros/forms.html" as forms %}
+
+<h3>{{message}}</h3>
+
+<h1>Muokkaa ainesosaa</h1> 
+
+{{forms.errors(errors)}}
+
+{{forms.ingredient_form("#{ingredient}", 'Tallenna', "#{current_uri}")}}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+{% import "macros/forms.html" as forms %}
+
+<h3>{{message}}</h3>
+
+<h1>Lisää {{product.category | lower}}</h1>
+
+{{forms.errors(errors)}}
+
+{{forms.product_form("#{product}", "#{ingredients}", 'Lisää', 
+                     "#{current_uri}")}}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+{% import "macros/forms.html" as forms %}
+
+<h3>{{message}}</h3>
+
+<h1>Rekisteröidy</h1> 
+
+{{forms.errors(errors)}}
+
+{{forms.user_form("#{attributes}", "register", "Rekisteröidy")}}
+
+{% endblock %}
