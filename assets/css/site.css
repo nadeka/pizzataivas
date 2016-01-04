@@ -5,14 +5,15 @@ body {
     font-family: Helvetica, sans-serif;
 }
 
-
-
 #front-page {
+    min-width: 50%;
     width: 50%;
+    
+    max-width: 100%;
 }
 
 .form-control {
-    width: 25%;
+    width: 250px;
 }
 
 .product-name {

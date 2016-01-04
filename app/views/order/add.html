@@ -3,7 +3,9 @@
 {% import "macros/forms.html" as forms %}
 {% import "macros/cart.html" as cart_ %}
 
-<h3>{{message}}</h3>
+{% if message %}
+    <div class="alert alert-success" role="alert">{{message}}</div>
+{% endif %}
 
 <h1>Kassa</h1> 
 

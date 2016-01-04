@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>{{message}}</h3>
+{% if message %}
+    <div class="alert alert-success" role="alert">{{message}}</div>
+{% endif %}
 
 <h1>Tilaushistoria</h1>  
 
@@ -11,7 +13,7 @@
     {% for order in orders %}
         <table class="order-table table table-responsive table-bordered table-hover">
             <thead>
-                <tr>   
+                <tr class="info">   
                     <th>Tilaaja</th>
                     <th>Toimitustapa</th>
                     <th>Toimitusosoite</th>
@@ -49,9 +51,9 @@
             </tbody> 
         </table>
     
-        <table class="table table-responsive table-bordered">
+        <table class="table table-responsive table-bordered table-hover">
             <thead>            
-                <tr>
+                <tr class="info">
                     <th>Tuotteet</th>
                     <th>Ainekset</th>
                     <th>Hinta</th>               
@@ -63,8 +65,8 @@
                     <tr>
                       <td>{{product.product_name}}</td>
                       <td>
-                          {% for ingredient in product.ingredients %}
-                                {{ingredient.ingredient_name}}
+                          {% for key, ingredient in product.ingredients %}
+                                {{ingredient.ingredient_name}}{% if product.ingredients[key + 1] is not null %},{% endif %}
                           {% endfor %}
                       </td>
                       <td>{{product.price}} €</td>

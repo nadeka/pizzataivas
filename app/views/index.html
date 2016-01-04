@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>{{message}}</h3>
+{% if message %}
+    <div class="alert alert-success" role="alert">{{message}}</div>
+{% endif %}
 
 <div id="front-page">
     <h1>Tervetuloa Pizzataivaaseen!</h1>

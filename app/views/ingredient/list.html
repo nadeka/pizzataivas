@@ -2,7 +2,9 @@
 {% block content %}
 {% import "macros/forms.html" as forms %}
 
-<h3>{{message}}</h3>
+{% if message %}
+    <div class="alert alert-success" role="alert">{{message}}</div>
+{% endif %}
 
 <p>
     <h1>Ainesosat</h1> 

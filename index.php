@@ -1,10 +1,6 @@
 <?php
 
-error_reporting(E_ALL);
-
-$script_name = $_SERVER['SCRIPT_NAME'];
-
-if ( !session_id() ) {
+if (!session_id()) {
     session_start();
 
     if (!isset($_SESSION['cart'])) {
@@ -15,7 +11,7 @@ if ( !session_id() ) {
 require 'vendor/autoload.php';
 
 $routes = new \Slim\Slim();
-$routes->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware);
+$routes->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware());
 
 require 'config/routes.php';
 
