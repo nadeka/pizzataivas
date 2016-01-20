@@ -11,6 +11,7 @@ if (!session_id()) {
 require 'vendor/autoload.php';
 
 $routes = new \Slim\Slim();
+
 $routes->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware());
 
 require 'config/routes.php';
